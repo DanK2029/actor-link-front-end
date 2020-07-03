@@ -1,5 +1,6 @@
-.actor-search-container {
-    background-color: #B2BEC3;
+#actor-search-container {
+    width: 100%;
+    height: 100%;
 
-    padding: 5px;
+    background-color: blue;
 }

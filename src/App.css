@@ -1,26 +1,17 @@
-.component-container {
-  display: grid;
-
-  width:  100%;
-  height: 100%;
-
-  grid-template-rows: [header-end] 50px;
-  grid-template-columns: [details-end] 20%;
-
-  color: white;
+.container-fluid {
+    height: 100%;
+    overflow: hidden;
 }
 
-.actor-search-container {
-  grid-row: 1 / [header-end];
-  grid-column: 1 / 3;
+.header {
+    height: 50px;
 }
 
-.details-container {
-  grid-row: [header-end] / 3;
-  grid-column: 1 / [details-end];
+.body {
+    height: 100%;
+    
 }
 
-.link-visualizer-container {
-  grid-row-start: [header-end] / 3;
-  grid-column-start: [details-end] / 3;
+.no-padding {
+    padding: 0 !important;
 }

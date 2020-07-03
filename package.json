@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "@babylonjs/core": "^4.1.0",
+    "bootstrap": "^4.5.0",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-scripts": "0.9.5"
   },
