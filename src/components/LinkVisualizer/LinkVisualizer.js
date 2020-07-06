@@ -65,13 +65,15 @@ class LinkVisualizer extends Component {
   }
 
   updateLink() {
+    const colWidth = 2 * this.aspectRatio / linkData.length;
+
     let prevNode = undefined;
     for (let index = 0; index < linkData.length; index++) {
       let node = this.scene.getObjectByName(`node-${index}`);
       node.position.x = this.aspectRatio * node.position.x / this.prevAspectRatio;
+      node.scale.set(colWidth/4, colWidth/4, 1);
 
       if (prevNode !== undefined) {
-        console.log('updating line', index);
         let line = this.scene.getObjectByName(`line-${index-1}:${index}`);
         
         line.geometry = new THREE.BufferGeometry().setFromPoints([
@@ -88,9 +90,10 @@ class LinkVisualizer extends Component {
     let prevCirclePos = undefined;
     link.forEach((node, index) => {
       var circle = new THREE.Mesh(
-        new THREE.CircleGeometry(0.1, 64), 
+        new THREE.CircleGeometry(1, 64), 
         new THREE.MeshBasicMaterial({ color: 0xffff00 })
       );
+      circle.scale.set(colWidth/4, colWidth/4, 1);
       circle.name = `node-${index}`;
 
       const x = colWidth * index + colWidth/2 - this.aspectRatio; 
