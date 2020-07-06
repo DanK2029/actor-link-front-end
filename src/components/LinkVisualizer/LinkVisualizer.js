@@ -72,12 +72,13 @@ class LinkVisualizer extends Component {
       let node = this.scene.getObjectByName(`node-${index}`);
       node.position.x = this.aspectRatio * node.position.x / this.prevAspectRatio;
       node.scale.set(colWidth/4, colWidth/4, 1);
-
+      
       if (prevNode !== undefined) {
         let line = this.scene.getObjectByName(`line-${index-1}:${index}`);
         
         line.geometry = new THREE.BufferGeometry().setFromPoints([
-          prevNode.position, node.position
+          new THREE.Vector3(prevNode.position.x, prevNode.position.y, 0.5),
+          new THREE.Vector3(node.position.x,     node.position.y,     0.5),
         ]);
       }
       prevNode = node;
@@ -106,7 +107,8 @@ class LinkVisualizer extends Component {
       if (prevCirclePos !== undefined) {
         let line = new THREE.Line(
           new THREE.BufferGeometry().setFromPoints([
-            prevCirclePos, new THREE.Vector3(x + offsetX, offsetY, 0)
+            new THREE.Vector3(prevCirclePos.x, prevCirclePos.y, 0.5), 
+            new THREE.Vector3(x + offsetX, offsetY, 0.5)
           ]),
           new THREE.LineBasicMaterial({
             color: 0xffffff,
@@ -114,7 +116,7 @@ class LinkVisualizer extends Component {
           })
         );
         line.name = `line-${index-1}:${index}`;
-        
+
         this.scene.add(line);
       }
 
