@@ -1,17 +1,20 @@
 .container-fluid {
     height: 100%;
-    overflow: hidden;
-}
-
-.header {
-    height: 50px;
-}
-
-.body {
-    height: 100%;
-    
 }
 
 .no-padding {
     padding: 0 !important;
+}
+
+.no-padding-margin {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.search-box {
+    margin-right: 5%;
+}
+
+.full-height {
+    height: 100%;
 }

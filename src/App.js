@@ -12,17 +12,17 @@ import './App.css';
 class App extends Component {
   render() {
     return (
-      <Container fluid>
-        <Row className="no-padding header">
+      <Container fluid className="no-padding-margin">
+        <Row className="no-padding-margin">
           <Col className="no-padding">
             <ActorSearch></ActorSearch>
           </Col>
         </Row>
-        <Row className="body">
-          <Col xs={12} sm={4} md={3} lg={2} className="no-padding">
+        <Row className="full-height no-padding-margin">
+          <Col xs={12} sm={4} md={3} lg={2} className="full-height no-padding">
             <Details></Details>
           </Col>
-          <Col xs={12} sm={8} md={9} lg={10} className="no-padding">
+          <Col xs={12} sm={8} md={9} lg={10} className="full-height no-padding">
             <LinkVisualizer></LinkVisualizer>
           </Col>
         </Row>
