@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import * as THREE from 'three';
+
 import MeshLine, { MeshLineMaterial } from 'three.meshline';
 import './LinkVisualizer.css';
+
+import { colors } from './Colors.js';
 
 var linkData = [
   {
@@ -29,36 +32,53 @@ var linkData = [
     name: "ACTOR 3",
     imageURL: "https://image.tmdb.org/t/p/w500/d0ZMdgMz1mVcWWctyF7sbymSlv4.jpg"
   },
+  {
+    type: "ACTOR",
+    name: "ACTOR 3",
+    imageURL: "https://image.tmdb.org/t/p/w500/d0ZMdgMz1mVcWWctyF7sbymSlv4.jpg"
+  },
 ];
 
 class LinkVisualizer extends Component {
+
   randRange(min, max) { return (Math.random() * (max-min)) + min; }
 
   componentDidMount() {
     this.scene = new THREE.Scene();
-    let orgContainer = document.getElementById('link-visualizer-container');
+    this.container = document.getElementById('link-visualizer-container');
 
-    this.aspectRatio = orgContainer.offsetWidth / orgContainer.offsetHeight;
+    this.aspectRatio = this.container.offsetWidth / this.container.offsetHeight;
     this.camera = new THREE.OrthographicCamera(-this.aspectRatio, this.aspectRatio, 1, -1, 1, -1);
 
-    this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(orgContainer.offsetWidth, orgContainer.offsetHeight);
+    this.renderer = new THREE.WebGLRenderer({antialias: true});
+    this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
+
+    this.curveColor = colors[Math.floor(this.randRange(0, colors.length-1))];
+    this.colWidth = 2 * this.aspectRatio / linkData.length;
+    this.circleRadius = this.colWidth / 4;
+    this.circleXOffsetRange = this.colWidth / 8;
+    this.circleYOffsetRange = 0.33;
+    this.curveWidth = this.colWidth / 32;
     
     window.addEventListener('resize', () => {
       this.resizeCamera();
       this.resizeLink();
     });
 
-
-    this.mousePullStrength = 0.5;
     this.mouse = new THREE.Vector3();
     this.mouseSet = false;
-    orgContainer.addEventListener('mousemove', (event) => {
+    
+    this.container.addEventListener('mousemove', (event) => {
       this.mouseSet = true;
-      let canvasBounds = orgContainer.getBoundingClientRect();
+      let canvasBounds = this.container.getBoundingClientRect();
       this.mouse.x = 2 * this.aspectRatio * (((event.clientX - canvasBounds.left) / (canvasBounds.right - canvasBounds.left)) - 0.5);
       this.mouse.y = -2 * (((event.clientY - canvasBounds.top) / (canvasBounds.bottom - canvasBounds.top)) - 0.5);
     });
+
+    this.container.addEventListener('mouseleave', (event) => {
+      this.mouse.x = Infinity;
+      this.mouse.x = Infinity;
+    })
 
     this.mount.appendChild(this.renderer.domElement);
     
@@ -76,11 +96,11 @@ class LinkVisualizer extends Component {
   applyMouseForce(node) {
     if (!this.mouseSet) return;
 
-    let mouseDist = this.mouse.distanceTo(node.userData.origPos);
-    let nodeTravelDist = node.position.distanceTo(node.userData.origPos);
+    const mouseDist = this.mouse.distanceTo(node.userData.origPos);
+    const nodeTravelDist = node.position.distanceTo(node.userData.origPos);
 
     if (mouseDist < this.mousePullRange && nodeTravelDist < this.mousePullRange) {
-      let pullStrength = Math.pow(this.mousePullRange - mouseDist, 2);
+      const pullStrength = Math.pow(this.mousePullRange - mouseDist, 2);
       node.position.lerp(this.mouse, pullStrength);
     } else {
       node.position.lerp(node.userData.origPos, 0.1);
@@ -90,20 +110,21 @@ class LinkVisualizer extends Component {
   createCurve(controlPoints) {
     let curvePoints = new THREE.CatmullRomCurve3(controlPoints)
       .getPoints(linkData.length * 32)
-      .map((point) => {return [point.x, point.y, point.z]})
+      .map((point) => { return [point.x, point.y, point.z] })
       .flat();
 
+    const colWidth = 2 * this.aspectRatio / linkData.length;
     let meshLine = new MeshLine.MeshLine();
     meshLine.setGeometry(curvePoints);
+    
     let size = new THREE.Vector2();
     this.renderer.getSize(size)
     let lineMaterial = new MeshLineMaterial({
-      color: new THREE.Color(1, 1, 1),
-      resolution: size,
-      lineWidth: 0.01
+      color: this.curveColor,
+      lineWidth: this.curveWidth
     });
 
-    let curve = new THREE.Mesh(meshLine.geometry, lineMaterial);
+    const curve = new THREE.Mesh(meshLine.geometry, lineMaterial);
     curve.name = 'curve';
 
     return curve;
@@ -116,10 +137,9 @@ class LinkVisualizer extends Component {
       return node.position;
     });
     
-    let curve = this.scene.getObjectByName('curve');
+    const curve = this.scene.getObjectByName('curve');
     this.scene.remove(curve);
     this.scene.add(this.createCurve(curveControlPoints));
-    
   }
 
   resizeCamera() {
@@ -127,7 +147,7 @@ class LinkVisualizer extends Component {
 
     this.prevAspectRatio = this.aspectRatio;
     this.aspectRatio = container.offsetWidth / container.offsetHeight;
-
+    this.colWidth = 2 * this.aspectRatio / linkData.length;
     this.renderer.setSize(container.offsetWidth, container.offsetHeight);
 
     this.camera.right = this.aspectRatio;
@@ -137,9 +157,10 @@ class LinkVisualizer extends Component {
   }
 
   resizeLink() {
-    const colWidth = 2 * this.aspectRatio / linkData.length;
-    this.mousePullRange = colWidth / 2;
-
+    this.mousePullRange = this.colWidth / 2;
+    this.circleRadius = this.colWidth / 4;
+    this.circleXOffsetRange = this.colWidth / 8;
+    this.curveWidth = this.colWidth / 32;
 
     linkData.forEach((node, index) => {
       let circle = this.scene.getObjectByName(`node-${index}`);
@@ -147,41 +168,51 @@ class LinkVisualizer extends Component {
       circle.position.x = this.aspectRatio * circle.position.x / this.prevAspectRatio;
       circle.userData.origPos.x = circle.position.x;
 
-      circle.scale.set(colWidth/4, colWidth/4, 1);
+      circle.scale.set(this.circleRadius, this.circleRadius, 1);
 
       this.applyMouseForce(circle);
-    })
+    });
   }
 
   createLink(link) {
-    const colWidth = 2 * this.aspectRatio / link.length;
-    this.mousePullRange = colWidth / 2;
+    this.mousePullRange = this.colWidth / 2;
 
-    let loader = new THREE.TextureLoader();
+    const loader = new THREE.TextureLoader();
 
     link.forEach((node, index) => {
-      var circle = new THREE.Mesh(
+      let circle = new THREE.Mesh(
         new THREE.CircleGeometry(1, 64), 
         new THREE.MeshBasicMaterial({ 
           color: 0xffffff,
           map: loader.load(node.imageURL)
         })
       );
+      circle.scale.set(this.circleRadius, this.circleRadius, 1);
+
+      let outerCircle = new THREE.Mesh(
+        new THREE.CircleGeometry(1, 64), 
+        new THREE.MeshBasicMaterial({ 
+          color: this.curveColor,
+        })
+      )
+      const outerCircleRadius = (this.circleRadius + this.curveWidth) / this.circleRadius;
+      outerCircle.scale.set(outerCircleRadius, outerCircleRadius, 1);
+      outerCircle.position.z = 0.1;
+      circle.add(outerCircle);
       
-      circle.scale.set(colWidth/4, colWidth/4, 1);
       circle.name = `node-${index}`;
 
-      const x = colWidth * index + colWidth/2 - this.aspectRatio; 
-      const offsetX = this.randRange(-colWidth/8, colWidth/8);
-      const offsetY = this.randRange(0.33, -0.33);
-
+      const x = (this.colWidth * index + this.colWidth / 2) - this.aspectRatio;
+      const offsetX = this.randRange(-this.circleXOffsetRange, this.circleXOffsetRange);
+      const offsetY = this.randRange(-this.circleYOffsetRange, this.circleYOffsetRange);
+      
       circle.position.set(x + offsetX, offsetY, 0);
       circle.userData.origPos = new THREE.Vector3(x + offsetX, offsetY, 0);
       this.scene.add(circle);
     });
 
     let curveControlPoints = this.scene.children.map((obj) => {
-      return new THREE.Vector3(obj.position.x, obj.position.y, 0.5);
+      return new THREE.Vector3(obj.position.x, obj.position.y, 0);
     });
 
     let curve = this.createCurve(curveControlPoints);
