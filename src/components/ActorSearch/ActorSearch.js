@@ -11,10 +11,9 @@ class ActorSearch extends Component {
     this.state = {
       actor1: '',
       actor2: '',
+      linkData: [],
     };
   }
-
-  
 
   updateActor1 = (event) => {
     this.setState({actor1: event.target.value});
@@ -24,11 +23,9 @@ class ActorSearch extends Component {
     this.setState({actor2: event.target.value});
   };
 
-  requestLinkData = () => {
+  getLinkData = () => {
     console.log(`Actor 1: ${this.state.actor1}, Actor 2: ${this.state.actor2}`);
-
-    // Dummy Data
-    return [
+    this.props.setLinkData([
       {
         type: "ACTOR",
         name: "ACTOR 1",
@@ -44,27 +41,10 @@ class ActorSearch extends Component {
         name: "ACTOR 2",
         imageURL: "https://image.tmdb.org/t/p/w500/d0ZMdgMz1mVcWWctyF7sbymSlv4.jpg"
       },
-      {
-        type: "MOVIE",
-        name: "MOVIE 2",
-        imageURL: "https://image.tmdb.org/t/p/w500/d0ZMdgMz1mVcWWctyF7sbymSlv4.jpg"
-      },
-      {
-        type: "ACTOR",
-        name: "ACTOR 3",
-        imageURL: "https://image.tmdb.org/t/p/w500/d0ZMdgMz1mVcWWctyF7sbymSlv4.jpg"
-      },
-      {
-        type: "ACTOR",
-        name: "ACTOR 3",
-        imageURL: "https://image.tmdb.org/t/p/w500/d0ZMdgMz1mVcWWctyF7sbymSlv4.jpg"
-      },
-    ];
+    ]);
   }
 
-
   render() {
-    let { search } = this.state;
     return (
       <Container fluid className="no-padding">
         <Navbar>
@@ -76,10 +56,10 @@ class ActorSearch extends Component {
               <Nav>
                 <Form inline className="full-width">
                   <FormControl type="text" placeholder="Actor 1..." className="search-box" 
-                    onChange={this.updateActor1} value={search}/>
+                    onChange={this.updateActor1}/>
                   <FormControl type="text" placeholder="Actor 2..." className="search-box"
-                    onChange={this.updateActor2} value={search}/>
-                  <Button variant="outline-info" onClick={this.requestLinkData}>Search</Button>
+                    onChange={this.updateActor2}/>
+                  <Button variant="outline-info" onClick={this.getLinkData}>Search</Button>
                 </Form>
               </Nav>
             </Col>

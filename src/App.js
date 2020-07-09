@@ -10,12 +10,24 @@ import LinkVisualizer from './components/LinkVisualizer/LinkVisualizer';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      linkData: [],
+    }
+  }
+
+  setLinkData = (linkData) => {
+    console.log('in parent link data');
+    this.setState({linkData: linkData});
+  }
+
   render() {
     return (
       <Container fluid className="no-padding-margin">
         <Row className="no-padding-margin">
           <Col className="no-padding">
-            <ActorSearch></ActorSearch>
+            <ActorSearch setLinkData={this.setLinkData}></ActorSearch>
           </Col>
         </Row>
         <Row className="full-height no-padding-margin">
@@ -23,7 +35,7 @@ class App extends Component {
             <Details></Details>
           </Col>
           <Col xs={12} sm={8} md={9} lg={10} className="full-height no-padding">
-            <LinkVisualizer></LinkVisualizer>
+            <LinkVisualizer linkData={this.state.linkData}></LinkVisualizer>
           </Col>
         </Row>
       </Container>

@@ -41,7 +41,32 @@ var linkData = [
 
 class LinkVisualizer extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      linkData: props.linkData,
+    }
+  }
+
   randRange(min, max) { return (Math.random() * (max-min)) + min; }
+
+  clearScene() {
+    while(this.scene.children.length > 0) {
+      this.scene.remove(this.scene.children[0]);
+    }
+  }
+
+  componentDidUpdate() {
+    this.clearScene();
+    if (this.props.linkData.length >= 0) {
+      this.colWidth = 2 * this.aspectRatio / this.props.linkData.length;
+      this.circleRadius = this.colWidth / 4;
+      this.circleXOffsetRange = this.colWidth / 8;
+      this.curveWidth = this.colWidth / 32;
+
+      this.createLink(this.props.linkData);
+    }
+  }
 
   componentDidMount() {
     this.scene = new THREE.Scene();
@@ -55,11 +80,7 @@ class LinkVisualizer extends Component {
     this.renderer.setClearColor(0x2d3436);
 
     this.curveColor = colors[Math.floor(this.randRange(0, colors.length-1))];
-    this.colWidth = 2 * this.aspectRatio / linkData.length;
-    this.circleRadius = this.colWidth / 4;
-    this.circleXOffsetRange = this.colWidth / 8;
     this.circleYOffsetRange = 0.33;
-    this.curveWidth = this.colWidth / 32;
     
     window.addEventListener('resize', () => {
       this.resizeCamera();
@@ -82,12 +103,10 @@ class LinkVisualizer extends Component {
     })
 
     this.mount.appendChild(this.renderer.domElement);
-    
-    this.createLink(linkData);
 
     var animate = () => {
       requestAnimationFrame( animate );
-      this.updateScene();
+      this.props.linkData.length !== 0 && this.updateScene();
       this.renderer.render(this.scene, this.camera);
     };
 
@@ -110,7 +129,7 @@ class LinkVisualizer extends Component {
 
   createCurve(controlPoints) {
     let curvePoints = new THREE.CatmullRomCurve3(controlPoints)
-      .getPoints(linkData.length * 32)
+      .getPoints(this.props.linkData.length * 32)
       .map((point) => { return [point.x, point.y, point.z] })
       .flat();
 
@@ -131,7 +150,7 @@ class LinkVisualizer extends Component {
   }
 
   updateScene() {
-    let curveControlPoints = linkData.map((_, index) => {
+    let curveControlPoints = this.props.linkData.map((_, index) => {
       let node = this.scene.getObjectByName(`node-${index}`);
       this.applyMouseForce(node);
       return node.position;
@@ -147,7 +166,7 @@ class LinkVisualizer extends Component {
 
     this.prevAspectRatio = this.aspectRatio;
     this.aspectRatio = container.offsetWidth / container.offsetHeight;
-    this.colWidth = 2 * this.aspectRatio / linkData.length;
+    this.colWidth = 2 * this.aspectRatio / this.props.linkData.length;
     this.renderer.setSize(container.offsetWidth, container.offsetHeight);
 
     this.camera.right = this.aspectRatio;
@@ -162,7 +181,7 @@ class LinkVisualizer extends Component {
     this.circleXOffsetRange = this.colWidth / 8;
     this.curveWidth = this.colWidth / 32;
 
-    linkData.forEach((node, index) => {
+    this.props.linkData.forEach((node, index) => {
       let circle = this.scene.getObjectByName(`node-${index}`);
 
       circle.position.x = this.aspectRatio * circle.position.x / this.prevAspectRatio;
@@ -205,8 +224,8 @@ class LinkVisualizer extends Component {
       const x = (this.colWidth * index + this.colWidth / 2) - this.aspectRatio;
       const offsetX = this.randRange(-this.circleXOffsetRange, this.circleXOffsetRange);
       const offsetY = this.randRange(-this.circleYOffsetRange, this.circleYOffsetRange);
-      
       circle.position.set(x + offsetX, offsetY, 0);
+      
       circle.userData.origPos = new THREE.Vector3(x + offsetX, offsetY, 0);
       this.scene.add(circle);
     });
@@ -214,7 +233,6 @@ class LinkVisualizer extends Component {
     let curveControlPoints = this.scene.children.map((obj) => {
       return new THREE.Vector3(obj.position.x, obj.position.y, 0);
     });
-
     let curve = this.createCurve(curveControlPoints);
     this.scene.add(curve);
 
