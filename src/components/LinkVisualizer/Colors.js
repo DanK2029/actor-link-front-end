@@ -20,7 +20,6 @@ let colorMap = {
     darkOrange: new Color(0xe17055),
 
     lightRed: new Color(0xff7675),
-    darkRed: new Color(0xd63031),
 
     lightPink: new Color(0xfd79a8),
     darkPink: new Color(0xe84393),

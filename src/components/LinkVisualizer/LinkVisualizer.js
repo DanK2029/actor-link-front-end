@@ -52,6 +52,7 @@ class LinkVisualizer extends Component {
 
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
+    this.renderer.setClearColor(0x2d3436);
 
     this.curveColor = colors[Math.floor(this.randRange(0, colors.length-1))];
     this.colWidth = 2 * this.aspectRatio / linkData.length;
@@ -71,7 +72,7 @@ class LinkVisualizer extends Component {
     this.container.addEventListener('mousemove', (event) => {
       this.mouseSet = true;
       let canvasBounds = this.container.getBoundingClientRect();
-      this.mouse.x = 2 * this.aspectRatio * (((event.clientX - canvasBounds.left) / (canvasBounds.right - canvasBounds.left)) - 0.5);
+      this.mouse.x =  2 * this.aspectRatio * (((event.clientX - canvasBounds.left) / (canvasBounds.right - canvasBounds.left)) - 0.5);
       this.mouse.y = -2 * (((event.clientY - canvasBounds.top) / (canvasBounds.bottom - canvasBounds.top)) - 0.5);
     });
 
@@ -157,7 +158,7 @@ class LinkVisualizer extends Component {
   }
 
   resizeLink() {
-    this.mousePullRange = this.colWidth / 2;
+    this.mousePullRange = this.colWidth / 8;
     this.circleRadius = this.colWidth / 4;
     this.circleXOffsetRange = this.colWidth / 8;
     this.curveWidth = this.colWidth / 32;

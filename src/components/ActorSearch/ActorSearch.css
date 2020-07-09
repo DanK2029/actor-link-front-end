@@ -14,3 +14,26 @@
 .full-width {
     width: 100%;
 }
+
+.navbar {
+    background: #b2bec3;
+}
+
+.btn-outline-info {
+    color: #2d3436 !important;
+    border-color: #2d3436 !important;
+}
+
+.btn-outline-info:hover {
+    color: #dfe6e9 !important;
+    background-color: #0984e3 !important;
+    border-color: #0984e3 !important;
+}
+
+.btn-outline-info:focus {
+    box-shadow: 0 0 0 0.2rem #74b9ff !important;
+}
+
+.search-box:focus {
+    box-shadow: 0 0 0 0.2rem #74b9ff !important;
+}

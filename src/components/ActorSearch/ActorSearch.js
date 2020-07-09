@@ -13,7 +13,7 @@ class ActorSearch extends Component {
   render() {
     return (
       <Container fluid className="no-padding">
-        <Navbar variant="dark" bg="dark">
+        <Navbar>
           <Row>
             <Col xs={12} sm={4} md={3} lg={2}>
               <Navbar.Brand>Actor Link</Navbar.Brand>
