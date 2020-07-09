@@ -114,7 +114,6 @@ class LinkVisualizer extends Component {
       .map((point) => { return [point.x, point.y, point.z] })
       .flat();
 
-    const colWidth = 2 * this.aspectRatio / linkData.length;
     let meshLine = new MeshLine.MeshLine();
     meshLine.setGeometry(curvePoints);
     
