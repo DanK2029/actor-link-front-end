@@ -56,16 +56,22 @@ class LinkVisualizer extends Component {
     }
   }
 
-  componentDidUpdate() {
-    this.clearScene();
-    if (this.props.linkData.length >= 0) {
-      this.colWidth = 2 * this.aspectRatio / this.props.linkData.length;
-      this.circleRadius = this.colWidth / 4;
-      this.circleXOffsetRange = this.colWidth / 8;
-      this.curveWidth = this.colWidth / 32;
-
-      this.createLink(this.props.linkData);
+  componentDidUpdate(prevProps) {
+    if (prevProps.linkData !== this.props.linkData) {
+      this.clearScene();
+      if (this.props.linkData.length >= 0) {
+        this.colWidth = 2 * this.aspectRatio / this.props.linkData.length;
+        this.circleRadius = this.colWidth / 4;
+        this.circleXOffsetRange = this.colWidth / 8;
+        this.curveWidth = this.colWidth / 32;
+  
+        this.createLink(this.props.linkData);
+      }
     }
+  }
+
+  setSelectedNode = (selectedNode) => {
+    this.props.setSelectedNode(selectedNode);
   }
 
   componentDidMount() {
@@ -101,6 +107,18 @@ class LinkVisualizer extends Component {
       this.mouse.x = Infinity;
       this.mouse.x = Infinity;
     })
+
+    this.container.addEventListener('click', (event) => {
+      this.props.linkData.some((node, index) => {
+        const circle = this.scene.getObjectByName(`node-${index}`);
+        const dist = circle.position.distanceTo(this.mouse);
+        const foundClicked = dist <= this.circleRadius;
+        if (foundClicked) {
+          this.setSelectedNode(this.props.linkData[index]);
+        }
+        return foundClicked;
+      })
+    });
 
     this.mount.appendChild(this.renderer.domElement);
 

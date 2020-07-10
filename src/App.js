@@ -14,12 +14,16 @@ class App extends Component {
     super(props);
     this.state = {
       linkData: [],
+      selectedNode: undefined,
     }
   }
 
   setLinkData = (linkData) => {
-    console.log('in parent link data');
     this.setState({linkData: linkData});
+  }
+
+  setSelectedNode = (node) => {
+    this.setState({selectedNode: node});
   }
 
   render() {
@@ -32,10 +36,10 @@ class App extends Component {
         </Row>
         <Row className="full-height no-padding-margin">
           <Col xs={12} sm={4} md={3} lg={2} className="full-height no-padding">
-            <Details></Details>
+            <Details selectedNode={this.state.selectedNode}></Details>
           </Col>
           <Col xs={12} sm={8} md={9} lg={10} className="full-height no-padding">
-            <LinkVisualizer linkData={this.state.linkData}></LinkVisualizer>
+            <LinkVisualizer linkData={this.state.linkData} setSelectedNode={this.setSelectedNode}></LinkVisualizer>
           </Col>
         </Row>
       </Container>
