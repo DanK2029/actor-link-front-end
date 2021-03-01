@@ -9,7 +9,7 @@
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-scripts": "0.9.5",
-    "three": "^0.118.3",
+    "three": "^0.125.0",
     "three.meshline": "^1.2.0"
   },
   "devDependencies": {},
